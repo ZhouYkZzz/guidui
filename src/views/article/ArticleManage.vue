@@ -124,12 +124,27 @@ const onSuccess = (type) => {
 
     <!-- 表格区域 -->
     <el-table :data="articleList" v-loading="loading">
-      <el-table-column label="文章标题" prop="title">
+      <el-table-column label="违约客户" prop="pub_date">
         <template #default="{ row }">
-          <el-link type="primary" :underline="false">{{ row.title }}</el-link>
+          {{ formatTime(row.createdTime) }}
         </template>
       </el-table-column>
-      <el-table-column label="生成时间" prop="pub_date">
+      <el-table-column label="审核状态" prop="pub_date">
+        <template #default="{ row }">
+          {{ formatTime(row.createdTime) }}
+        </template>
+      </el-table-column>
+      <el-table-column label="违约原因" prop="pub_date">
+        <template #default="{ row }">
+          {{ formatTime(row.createdTime) }}
+        </template>
+      </el-table-column>
+      <el-table-column label="严重程度" prop="pub_date">
+        <template #default="{ row }">
+          {{ formatTime(row.createdTime) }}
+        </template>
+      </el-table-column>
+      <el-table-column label="认定人" prop="pub_date">
         <template #default="{ row }">
           {{ formatTime(row.createdTime) }}
         </template>

@@ -4,10 +4,10 @@ import { ElMessage, ElMessageBox, ElDialog } from 'element-plus'
 import { useRoute } from 'vue-router'
 import { artSave } from '@/api/article.js'
 import E from "wangeditor";
-import MarkdownIt from "markdown-it";
+//import MarkdownIt from "markdown-it";
 import TurndownService from 'turndown';
 import { articleStore } from '@/stores'
-const onSuccess = () => {
+const onSuccess = () => {[plugin:vite:import-analysis] Failed to resolve import "markdown-it" from "src\views\article\ArticleChannel.vue". Does the file exist?
   // 处理成功回调
 }
 const markdown = new MarkdownIt();

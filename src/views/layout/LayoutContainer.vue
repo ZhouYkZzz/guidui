@@ -61,15 +61,15 @@ const handleCommand = async (key) => {
       >
         <el-menu-item index="/article/channel">
           <el-icon><Management /></el-icon>
-          <span>文案生成</span>
+          <span>违约认定申请</span>
         </el-menu-item>
         <el-menu-item index="/article/edit">
           <el-icon><Management /></el-icon>
-          <span>文案编辑</span>
+          <span>违约认定审核</span>
         </el-menu-item>
         <el-menu-item index="/article/manage">
           <el-icon><Promotion /></el-icon>
-          <span>文章管理</span>
+          <span>违约信息查询</span>
         </el-menu-item>
 
         <el-sub-menu index="/user">
