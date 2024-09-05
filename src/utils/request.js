@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useUserStore } from '@/stores'
 import { ElMessage } from 'element-plus'
 import router from '@/router'
-const baseURL = 'http://116.62.5.195:8080'
+const baseURL = ' https://1fed-112-10-128-98.ngrok-free.app'
 
 const instance = axios.create({
   // TODO 1. 基础地址，超时时间

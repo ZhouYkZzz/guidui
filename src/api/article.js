@@ -41,3 +41,6 @@ export const artDelService = (id) =>
 
 //生成大纲
   export const artOutlineService = (data) => request.post('/aigc/outline', data)
+
+  //登录
+  export const registerService = (data) => request.post('/register', data)

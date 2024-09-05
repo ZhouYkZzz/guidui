@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { ElMessage, ElMessageBox, ElDialog, ElButton } from 'element-plus'
-import { artOutlineService, artPublishService } from '@/api/article.js'
+import { artOutlineService, artPublishService,registerService } from '@/api/article.js'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import { onMounted } from 'vue'
 //import MarkdownIt from "markdown-it";
@@ -102,6 +102,29 @@ const isSidebarOpen = ref(false);
 
 // }
 //#endregion 生成文章
+
+const Register = async () => {
+
+    // 整合为 JSON 数据
+    const data = {
+        "username": "许强",
+        "password": "ullamco eu",
+        "is_reviewer": false
+    };
+
+    // 调用接口请求
+
+    const res = await registerService(data)
+    if (res.data.code === 200) {
+        ElMessage.success('成功')
+        console.log(res)
+    } else {
+        console.log(res)
+        ElMessage.error('失败: ' + res.data.message) // 显示错误信息
+    }
+
+};
+
 const onSuccess = () => {
     // 处理成功回调
 }
@@ -144,7 +167,7 @@ const onSuccess = () => {
         <div>
             备注信息 <input v-model="remarks" placeholder="请输入备注信息"></input>
         </div>
-        <el-button @click="" type="primary">
+        <el-button @click="Register" type="primary">
                     提交申请
         </el-button>
         <!-- <span class="createArticle">
