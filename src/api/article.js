@@ -12,14 +12,14 @@ export const artDelChannelService = (id) =>
     params: { id }
   })
 //1.1: 获取违约原因
-export const artGetReasonService = () => request.get('/reasons')
-
+export const artGetReasonService = () =>   
+  request.get('/reasons/default');  
 // 2.1：获取违约申请列表
 export const artGetBreachService = () => request.get('/applications')
 
 // 2.2：创建新的违约申请
 export const artCreateBreachService = (data) =>
-  request.post('/applications', data)
+  request.post('/applications/create', data)
 
 // 2.3：获取特定违约申请详情
 export const artGetDetailService = (id) =>

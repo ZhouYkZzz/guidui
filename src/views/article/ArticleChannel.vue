@@ -1,131 +1,122 @@
 <script setup>
 import { ref } from 'vue'
 import { ElMessage, ElMessageBox, ElDialog, ElButton } from 'element-plus'
-import { artGetReasonService } from '@/api/article.js'
+import { artGetReasonService,artCreateBreachService } from '@/api/article.js'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import { onMounted } from 'vue'
-//import MarkdownIt from "markdown-it";
-//import TurndownService from 'turndown';
 import { articleStore } from '@/stores'
 import { useRouter } from 'vue-router'
+
 const input1 = ref('')
 const input2 = ref('')
 const generatedText = ref('')
 const dialogVisible = ref(false)
 const textGenerated = ref(false)
-// 定义响应式数据 articleTitle 和 articleContent
 const articleTitle = ref('')
 const articleContent = ref('')
 const outline = ref('')
 const router = useRouter();
 const articlestore = articleStore()
 
+const reasonsList = ref('')
+const customer_name = ref('')
+const remarks = ref('')
 
 const showSidebar = ref(false);
+
+onMounted(async () => {  
+    try {  
+        const response = await artGetReasonService();  
+        if (response) {  
+            console.log('成功获取违约原因列表:', response.data);
+            reasonsList.value = response.data; // 确保 response.data 正确  
+            populateReasons();  
+        } else {  
+            throw new Error('无效的响应格式');  
+        }  
+    } catch (error) {  
+        console.error('API 调用失败:', error);  
+                if (error.response) {  
+                    console.error('响应数据:', error.response.data);  
+                    console.error('响应状态:', error.response.status);  
+                    console.error('响应头:', error.response.headers);  
+                } else if (error.request) {  
+                    console.error('请求数据:', error.request);  
+                } else {  
+                    console.error('错误信息:', error.message);  
+                }  
+                const errorMessage = error?.message || '未知错误';  
+                ElMessage.error('获取数据失败: ' + errorMessage);  
+        }
+});
+
+const CommitApplication = async () => {
+    try {
+        // 获取表单数据
+        const customerName = customer_name.value;
+        const externalRating = document.getElementById('level').value;
+        const selectedReason = document.getElementById('reasons').value;
+        const severity = document.getElementById('severity').value;
+        const remarksText = remarks.value;
+
+        // 构建请求数据
+        const data = {
+            customer_name: customerName,
+            external_rating: externalRating, 
+            reason_id: parseInt(selectedReason, 10), // 将字符串转换为整数
+            severity: severity, 
+            remarks: remarksText,
+            attachments: [], // 待定
+        };
+
+        // 调用 API 服务
+        const response = await artCreateBreachService(data);
+        console.log('申请提交成功:', response);
+
+        // 成功信息提示
+        ElMessage.success('申请提交成功！');
+    } catch (error) {
+        console.error('申请提交失败:', error);
+        const errorMessage = error?.message || '未知错误';
+        ElMessage.error('提交申请失败: ' + errorMessage);
+    }
+};
+
+
+const populateReasons = async () => {  
+    const selectElement = document.getElementById('reasons');  
+    
+    // 清空已有的选项，保留第一项  
+    while (selectElement.options.length > 1) {  
+        selectElement.remove(1);  
+    }  
+
+    // 添加新的选项  
+    reasonsList.value.forEach(reason => {  
+        const option = document.createElement('option');  
+        option.value = reason.ID;  // 使用 reason.ID 作为选项的值
+        option.textContent = reason.Reason;   // 显示的文本  
+        selectElement.appendChild(option);  
+    });  
+}  
+
+const displaySelected = () => {  
+    const selectElement = document.getElementById('reasons');  
+    const selectedValue = selectElement.value;  
+    console.log('Selected reason ID:', selectedValue);  
+}
 
 const toggleSidebar = () => {
     showSidebar.value = !showSidebar.value;
     isSidebarOpen.value = !isSidebarOpen.value;
 };
+
 const closeSidebar = () => {
     showSidebar.value = false; // 关闭侧边栏
     isSidebarOpen.value = false;
 };
+
 const isSidebarOpen = ref(false);
-
-//#region 生成文章
-// 在你的Vue组件中定义一个方法来获取文章标题和文章内容，并调用接口请求
-// const generateOutline = async () => {
-
-//     //console.log('成功调用 generateOutline 方法');
-
-//     // 检查文章标题是否为空
-//     if (!articleTitle.value.trim()) {
-//         alert('文章标题不能为空');
-//         return; // 结束函数
-//     } else {
-//         //alert(articleTitle.value);
-//     }
-
-//     // 整合为 JSON 数据
-//     const data = {
-//         "title": articleTitle.value,
-//         "description": articleContent.value
-//     };
-
-//     // 调用接口请求
-
-//     const res = await artOutlineService(data)
-//     if (res.data.code === 200) {
-//         ElMessage.success('生成成功')
-//         const dagInput = document.getElementById('dag');
-//         dagInput.value = res.data.data;
-//         dagInput.dispatchEvent(new Event('input'));
-//     } else {
-//         console.log(res)
-//         ElMessage.error('生成失败: ' + res.data.message) // 显示错误信息
-//     }
-
-// };
-
-// const createArticle = async () => {
-//     //console.log('成功调用方法');
-//     // 检查文章大纲是否为空
-//     if (!outline.value.trim()) {
-//         alert('文章大纲不能为空');
-//         return; // 结束函数
-//     }
-
-//     const data = {
-//         "title": articleTitle.value,
-//         "outline": outline.value,
-//     }
-//     //测试
-//     // const input = 123;
-//     //     router.push({ name: 'edit', query: { input } });
-//     const res = await artPublishService(data)
-//     if (res.data.code === 200) {
-//         ElMessage.success('生成成功')
-//         articlestore.setarticle({
-//             id: null,
-//             title: articleTitle.value,
-//             content: res.data.data,
-//             createdTime: null
-//         })
-//         router.push({ name: 'edit' })
-//         // const articleContent = res.data.data;
-//         // router.push({ name: 'edit', query: { articleContent, articleTitle: articleTitle.value } });
-//     } else {
-//         console.log(res)
-//         ElMessage.error('生成失败: ' + res.data.message) // 显示错误信息
-//     }
-
-// }
-//#endregion 生成文章
-
-//#region 测试
-const Register = async () => {
-
-    // 整合为 JSON 数据
-    const data = {
-        "username": "许强",
-        "password": "ullamco eu",
-        "is_reviewer": false
-    };
-
-    // 调用接口请求
-
-    const res = await registerService(data)
-    if (res.data.code === 200) {
-        ElMessage.success('成功')
-        console.log(res)
-    } else {
-        console.log(res)
-        ElMessage.error('失败: ' + res.data.message) // 显示错误信息
-    }
-
-};
-//#endregion 测试
 
 const onSuccess = () => {
     // 处理成功回调
@@ -135,81 +126,41 @@ const onSuccess = () => {
 <template>
     <div class="overlay" v-if="isSidebarOpen" @click="closeSidebar"></div>
     <page-container title="违约认定申请">
-
         <div>
             客户名称 <input v-model="customer_name" placeholder="请输入客户名称"></input>
         </div>
         <div>
-            <label for="options">最新外部等级:</label>  
-            <select id="options" onchange="displaySelected()">  
+            <label for="level">最新外部等级:</label>  
+            <select id="level" onchange="">  
                 <option value="">请选择</option>  
-                <option value="option1">A</option>  
-                <option value="option2">B</option>  
-                <option value="option3">C</option>  
+                <option value="1">A</option>  
+                <option value="2">B</option>  
+                <option value="3">C</option>  
             </select>  
         </div>
         <div>
-            <label for="options">违约原因:</label>  
-            <select id="options" onchange="displaySelected()">  
-                <option value="">请选择</option>  
-                <option value="option1">未按时还款</option>  
-                <option value="option2">资金链断裂</option>  
-                <option value="option3">其他</option>  
+            <label for="reasons">违约原因:</label>  
+            <select id="reasons" @change="displaySelected()"> 
+                <option value="">请选择</option>
             </select>  
         </div>
         <div>
-            <label for="options">违约严重性:</label>  
-            <select id="options" onchange="displaySelected()">  
-                <option value="">请选择</option>  
-                <option value="option1">高</option>  
-                <option value="option2">中</option>  
-                <option value="option3">低</option>  
+            <label for="severity">违约严重性:</label>  
+            <select id="severity" onchange="">  
+                <option value="0">请选择</option>  
+                <option value="1">高</option>  
+                <option value="2">中</option>  
+                <option value="3">低</option>  
             </select>  
         </div>
         <div>
             备注信息 <input v-model="remarks" placeholder="请输入备注信息"></input>
         </div>
-        <el-button @click="Register" type="primary">
-                    提交申请
+        <el-button @click="CommitApplication" type="primary">
+            提交申请
         </el-button>
-        <!-- <span class="createArticle">
-            生成文案
-            <button @click="toggleSidebar">生成</button>
-        </span>
-        // 侧边栏
-        <div v-if="showSidebar" class="sidebar">
-            
-            <el-button @click="closeSidebar" type="info" circle="true"><el-icon size="30">
-                    <Close />
-                </el-icon></el-button>
-            <div>
-                <p>
-                    文章标题 <input v-model="articleTitle" placeholder="请输入标题"></input>
-                </p>
-            </div>
-            <div>
-                <p>
-                    文案要求 <input v-model="articleContent" placeholder="请输入内容"></input>
-                </p>
-            </div>
-            <div>
-                <p>
-                    <el-button @click="generateOutline" type="primary">生成大纲</el-button>
-                </p>
-            </div>
-            <p>
-                <textarea type="text" id="dag" v-model="outline" placeholder="待生成"></textarea>
-            </p>
-            <p>
-                <el-button @click="createArticle" type="primary">
-                    生成文案
-                </el-button>
-            </p>
-        </div> -->
-
     </page-container>
 </template>
-
 
 <style lang="scss" scoped>
 .sidebar {
@@ -222,18 +173,17 @@ const onSuccess = () => {
     z-index: 999;
 }
 
-div{
+div {
     margin-top: 15px;
 }
 
 select {  
-    padding: 10px;  
+    padding: 8px;  
     border: 1px solid #ccc;  
     border-radius: 4px;  
     margin-top: 10px;  
 }
 
-            
 .overlay {
     position: fixed;
     top: 0;

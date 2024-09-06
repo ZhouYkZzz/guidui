@@ -10,7 +10,6 @@ import { articleStore } from '@/stores'
 // const onSuccess = () => {[plugin:vite:import-analysis] Failed to resolve import "markdown-it" from "src\views\article\ArticleChannel.vue". Does the file exist?
 //   // 处理成功回调
 // }
-const markdown = new MarkdownIt();
 const turndownService = new TurndownService();
 const articlestore = articleStore()
 const data = {
