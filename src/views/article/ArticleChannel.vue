@@ -75,12 +75,20 @@ const CommitApplication = async () => {
 
         // 成功信息提示
         ElMessage.success('申请提交成功！');
+
+        // 清空输入框
+        customer_name.value = '';
+        document.getElementById('level').value = '';
+        document.getElementById('reasons').value = '';
+        document.getElementById('severity').value = '';
+        remarks.value = '';
     } catch (error) {
         console.error('申请提交失败:', error);
         const errorMessage = error?.message || '未知错误';
         ElMessage.error('提交申请失败: ' + errorMessage);
     }
 };
+
 
 
 const populateReasons = async () => {  
