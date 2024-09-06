@@ -1,11 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { ElMessage, ElMessageBox, ElDialog, ElButton } from 'element-plus'
-<<<<<<< HEAD
-import { artOutlineService, artPublishService,registerService } from '@/api/article.js'
-=======
-//import { artOutlineService, artPublishService } from '@/api/article.js'
->>>>>>> 2d577ff996c46e50e401a54db8088c609340e5a2
+import { artGetReasonService } from '@/api/article.js'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import { onMounted } from 'vue'
 //import MarkdownIt from "markdown-it";
@@ -107,6 +103,7 @@ const isSidebarOpen = ref(false);
 // }
 //#endregion 生成文章
 
+//#region 测试
 const Register = async () => {
 
     // 整合为 JSON 数据
@@ -128,6 +125,7 @@ const Register = async () => {
     }
 
 };
+//#endregion 测试
 
 const onSuccess = () => {
     // 处理成功回调

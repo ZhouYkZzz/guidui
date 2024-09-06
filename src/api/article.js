@@ -11,6 +11,8 @@ export const artDelChannelService = (id) =>
   request.delete('/my/cate/del', {
     params: { id }
   })
+//1.1: 获取违约原因
+export const artGetReasonService = () => request.get('/reasons')
 
 // 2.1：获取违约申请列表
 export const artGetBreachService = () => request.get('/applications')
