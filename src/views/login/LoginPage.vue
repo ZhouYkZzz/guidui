@@ -4,13 +4,15 @@ import { User, Lock } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
 import { useUserStore } from '@/stores'
 import { useRouter } from 'vue-router'
+import axois from 'axios'
 const isRegister = ref(false)
 const form = ref()
 
 // 整个的用于提交的form数据对象
 const formModel = ref({
-  name: '',
+  username: '',
   password: '',
+  is_reviewer: false,
   repassword: ''
 })
 // 整个表单的校验规则
@@ -25,9 +27,9 @@ const formModel = ref({
 //        - callback() 校验成功
 //        - callback(new Error(错误信息)) 校验失败
 const rules = {
-  name: [
+  username: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 5, max: 10, message: '用户名必须是 5-10位 的字符', trigger: 'blur' }
+    { min: 1, max: 10, message: '用户名必须是 1-10位 的字符', trigger: 'blur' }
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
@@ -59,7 +61,6 @@ const rules = {
 }
 
 const register = async () => {
-  // 注册成功之前，先进行校验，校验成功 → 请求，校验失败 → 自动提示
   await form.value.validate()
   await userRegisterService(formModel.value)
   ElMessage.success('注册成功')
@@ -69,27 +70,28 @@ const register = async () => {
 const userStore = useUserStore()
 const router = useRouter()
 const login = async () => {
-  await form.value.validate() // 确保表单数据通过验证
-    try {
-      const res = await userLoginService(formModel.value)
-      if (res.data.code === 200) {
-        userStore.setToken(res.data.data) // 直接使用后端返回的 token 字符串)
-        ElMessage.success('登录成功')
-        router.push('/') // 导航到主页
-      } else {
-        console.log(res)
-        ElMessage.error('登录失败: ' + res.data.message) // 显示错误信息
-      }
-    } catch (error) {
-      ElMessage.error('请求失败，请检查网络连接') // 处理网络或其他错误
+  //await form.value.validate() // 确保表单数据通过验证
+  try {
+    const res = await userLoginService(formModel.value)
+    if (res.data.status === 0) {
+      userStore.setToken(res.data.data) // 直接使用后端返回的 token 字符串)
+      ElMessage.success('登录成功')
+      router.push('/') // 导航到主页
+    } else {
+      console.log(res)
+      ElMessage.error('登录失败: ' + res.data.message) // 显示错误信息
     }
+  } catch (error) {
+    ElMessage.error('请求失败，请检查网络连接') // 处理网络或其他错误
+  }
 }
 
 // 切换的时候，重置表单内容
 watch(isRegister, () => {
   formModel.value = {
-    name: '',
+    username: '',
     password: '',
+    is_reviewer: false,
     repassword: ''
   }
 })
@@ -130,7 +132,7 @@ watch(isRegister, () => {
         </el-form-item>
         <el-form-item prop="name">
           <el-input
-            v-model="formModel.name"
+            v-model="formModel.username"
             :prefix-icon="User"
             placeholder="请输入用户名"
           ></el-input>
@@ -182,7 +184,7 @@ watch(isRegister, () => {
         </el-form-item>
         <el-form-item prop="name">
           <el-input
-            v-model="formModel.name"
+            v-model="formModel.username"
             :prefix-icon="User"
             placeholder="请输入用户名"
           ></el-input>

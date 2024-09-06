@@ -12,33 +12,112 @@ export const artDelChannelService = (id) =>
     params: { id }
   })
 
+// 2.1：获取违约申请列表
+export const artGetBreachService = () => request.get('/applications')
 
+// 2.2：创建新的违约申请
+export const artCreateBreachService = (data) =>
+  request.post('/applications', data)
+
+// 2.3：获取特定违约申请详情
+export const artGetDetailService = (id) =>
+  request.get('/applications', {
+    params: { id }
+  })
+
+// 2.4更新违约申请
+export const artEditService = (id, data) =>
+  request.put('/applications', data, {
+    params: { id }
+  })
+
+// 2.5：删除违约接口
+export const artDelService = (id) => request.delete('/applications' + id)
+
+//3.1获取违约认定审核列表
+export const artGetReviewService = () => request.get('/reviews')
+
+//3.2创建新的违约认定审核
+export const artCreateReviewService = (data) => request.post('/reviews', data)
+
+//3.3获取特定违约认定审核详情
+export const artGetReviewDetailService = (id) =>
+  request.get('/reviews', {
+    params: { id }
+  })
+
+//3.4更新违约认定审核
+export const artEditReviewService = (id, data) =>
+  request.put('/reviews', data, {
+    params: { id }
+  })
+//3.5删除违约认定审核
+export const artDelReviewService = (id) => request.delete('/reviews' + id)
+
+//4.1获取违约认定结果列表
+export const artGetResultService = () => request.get('/queries')
+
+//4.2获取特定违约认定结果详情
+export const artGetResultDetailService = (id) =>
+  request.get('/queries', {
+    params: { id }
+  })
+
+//5.1获取违约重生申请列表
+export const artGetRebirthService = () => request.get('/rebirth-applications')
+
+//5.2创建新的违约重生申请
+export const artCreateRebirthService = (data) =>
+  request.post('/rebirth-applications', data)
+
+//5.3获取特定违约重生申请详情
+export const artGetRebirthDetailService = (id) =>
+  request.get('/rebirth-applications', {
+    params: { id }
+  })
+
+//5.4更新违约重生申请
+export const artEditRebirthService = (id, data) =>
+  request.put('/rebirth-applications', data, {
+    params: { id }
+  })
+
+//5.5删除违约重生申请
+export const artDelRebirthService = (id) =>
+  request.delete('/rebirth-applications' + id)
+
+//6.1获取违约重生审核列表
+export const artGetRebirthReviewService = () => request.get('/rebirth-reviews')
+
+//6.2创建新的违约重生审核
+export const artCreateRebirthReviewService = (data) =>
+  request.post('/rebirth-reviews', data)
+
+//6.3获取特定违约重生审核详情
+export const artGetRebirthReviewDetailService = (id) =>
+  request.get('/rebirth-reviews', {
+    params: { id }
+  })
+
+//6.4更新违约重生审核
+export const artEditRebirthReviewService = (id, data) =>
+  request.put('/rebirth-reviews', data, {
+    params: { id }
+  })
+
+//6.5删除违约重生审核
+export const artDelRebirthReviewService = (id) =>
+  request.delete('/rebirth-reviews' + id)
 
 // 文章1：获取文章列表
 export const artGetListService = () => request.get('/article')
 
 // 文章1：生成文章
-export const artPublishService = (data) => request.post('/aigc/finalArticle', data)
+export const artPublishService = (data) =>
+  request.post('/aigc/finalArticle', data)
 
-// 文章1：获取文章详情
-export const artGetDetailService = (id) =>
-  request.get('/sort', {
-    params: { id }
-  })
-
-// 文章1：编辑文章接口
-export const artEditService = (id, data) =>
-  request.put('/article/save', data, {
-    params: { id }
-  })
 //保存文章接口
-export const artSave = (data) =>
-  request.post('/article/save', data)
-
-// 文章：删除文章接口
-export const artDelService = (id) =>
-  request.delete('/article/delete/'+id)
-
+export const artSave = (data) => request.post('/article/save', data)
 //生成大纲
   export const artOutlineService = (data) => request.post('/aigc/outline', data)
 
