@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { Delete, Edit } from '@element-plus/icons-vue'
 //import ChannelSelect from './components/ChannelSelect.vue'
 import ArticleEdit from './components/ArticleEdit.vue'
-import { artGetListService, artDelService } from '@/api/article.js'
+//import { artGetListService, artDelService } from '@/api/article.js'
 import { formatTime } from '@/utils/format.js'
 import { useRouter } from 'vue-router'
 import { articleStore } from '@/stores'
@@ -20,16 +20,16 @@ const params = ref({
 })
 
 // 基于params参数，获取文章列表
-const getArticleList = async () => {
-  loading.value = true
+// const getArticleList = async () => {
+//   loading.value = true
 
-  const res = await artGetListService()
-  articleList.value = res.data.data
-  total.value = res.data.total
+//   //const res = await artGetListService()
+//   articleList.value = res.data.data
+//   total.value = res.data.total
 
-  loading.value = false
-}
-getArticleList()
+//   loading.value = false
+// }
+// getArticleList()
 
 // 处理分页逻辑
 const onSizeChange = (size) => {

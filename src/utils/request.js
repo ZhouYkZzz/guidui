@@ -1,8 +1,9 @@
 import axios from 'axios'
-import { useUserStore } from '@/stores'
+
+//import { useUserStore } from '@/stores'
 import { ElMessage } from 'element-plus'
 import router from '@/router'
-const baseURL = 'http://116.62.5.195:8080'
+const baseURL = 'https://1fed-112-10-128-98.ngrok-free.app'
 
 const instance = axios.create({
   // TODO 1. 基础地址，超时时间
@@ -10,24 +11,11 @@ const instance = axios.create({
   timeout: 100000
 })
 
-// 请求拦截器
-instance.interceptors.request.use(
-  (config) => {
-    // TODO 2. 携带token
-    const useStore = useUserStore()
-    if (useStore.token) {
-      config.headers.Authorization = `Bearer ${useStore.token}`
-    }
-    return config
-  },
-  (err) => Promise.reject(err)
-)
-
 // 响应拦截器
 instance.interceptors.response.use(
   (res) => {
     // TODO 4. 摘取核心响应数据
-    if (res.data.code === 200) {
+    if (res.data.status == 0) {
       return res
     }
     // TODO 3. 处理业务失败
@@ -36,17 +24,13 @@ instance.interceptors.response.use(
     return Promise.reject(res.data)
   },
   (err) => {
-    // TODO 5. 处理401错误
-    // 错误的特殊情况 => 401 权限不足 或 token 过期 => 拦截到登录
-    if (err.response?.status === 401) {
-      router.push('/login')
-    }
-
     // 错误的默认情况 => 只要给提示
     ElMessage.error(err.response.data.message || '服务异常')
     return Promise.reject(err)
   }
 )
+
+instance.defaults.headers.common['Content-Type'] = 'application/json'
 
 export default instance
 export { baseURL }
