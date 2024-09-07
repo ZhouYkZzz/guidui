@@ -7,6 +7,7 @@ import { useRouter } from 'vue-router'
 import axois from 'axios'
 const isRegister = ref(false)
 const form = ref()
+const user_id = ref('')
 
 // 整个的用于提交的form数据对象
 const formModel = ref({
@@ -34,16 +35,16 @@ const rules = {
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
     {
-      pattern: /^\S{6,15}$/,
-      message: '密码必须是 6-15位 的非空字符',
+      pattern: /^\S{1,15}$/,
+      message: '密码必须是 1-15位 的非空字符',
       trigger: 'blur'
     }
   ],
   repassword: [
     { required: true, message: '请输入密码', trigger: 'blur' },
     {
-      pattern: /^\S{6,15}$/,
-      message: '密码必须是 6-15位 的非空字符',
+      pattern: /^\S{1,15}$/,
+      message: '密码必须是 1-15位 的非空字符',
       trigger: 'blur'
     },
     {
@@ -74,6 +75,12 @@ const login = async () => {
   try {
     const res = await userLoginService(formModel.value)
     if (res.data.status === 0) {
+      user_id.value = res.data.data.user_id // 保存用户id
+      const userInfo = {
+        id: user_id.value,
+      }
+      userStore.setUser(userInfo)
+      console.log(userStore.user.userID)
       userStore.setToken(res.data.data) // 直接使用后端返回的 token 字符串)
       ElMessage.success('登录成功')
       router.push('/') // 导航到主页

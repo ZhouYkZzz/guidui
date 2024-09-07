@@ -34,7 +34,7 @@ export const artEditService = (id, data) =>
   })
 
 // 2.5：删除违约接口
-export const artDelService = (id) => request.delete('/applications' + id)
+export const artDelService = (id) => request.delete('/applications/'+ id)
 
 //3.1获取违约认定审核列表
 export const artGetReviewService = () => request.get('/reviews')

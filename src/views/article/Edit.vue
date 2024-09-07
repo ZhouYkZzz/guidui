@@ -33,6 +33,12 @@
             </el-select>
           </template>
         </el-table-column>
+        <!-- 新增删除按钮列 -->
+        <el-table-column label="操作">
+          <template #default="scope">
+            <el-button type="danger" @click="deleteBreach(scope.row.ID)">删除</el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
   </page-container>
@@ -40,9 +46,11 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { ElMessage, ElSelect, ElOption, ElInput } from 'element-plus'
-import { artGetBreachService, artGetReasonService } from '@/api/article.js'
+import { ElMessage, ElSelect, ElOption, ElInput, ElButton } from 'element-plus'
+import { artGetBreachService, artGetReasonService, artDelService,artGetReviewDetailService } from '@/api/article.js'
+import {useUserStore} from '@/stores'
 
+const userStore = useUserStore()
 const breachList = ref([]) // 违约信息列表
 const reasonsList = ref([]) // 违约原因列表
 const searchCustomerName = ref('') // 搜索客户名称
@@ -78,7 +86,7 @@ async function fetchReasonsList() {
         if (reasonResponse && reasonResponse.data) {  
             console.log('成功获取违约原因列表:', reasonResponse.data);
             reasonsList.value = reasonResponse.data;  
-        } else {  
+        } else {
             throw new Error('无效的响应格式');  
         }  
     } catch (error) {  
@@ -109,9 +117,27 @@ function getReason(reasonID) {
 }
 
 // 更新审核状态的函数
-function UpdateState(row) {
+async function UpdateState(row) {
     console.log('更新审核状态:', row.AuditStatus);
-    // 这里可以添加实际的更新逻辑，例如调用API更新数据库中的状态
+    try {
+        // 构建请求数据
+        const data = {
+            application_id: row.ID, // 假设 row.ID 是 application_id
+            reviewer_id: userStore.user.userID, // 从 userStore 中获取 reviewer_id
+            status: row.AuditStatus, // 当前审核状态
+        };
+
+        // 调用 API 服务
+        const response = await artGetReviewDetailService(data);
+        console.log('审核状态更新成功:', response);
+
+        // 成功信息提示
+        ElMessage.success('审核状态更新成功！');
+    } catch (error) {
+        console.error('审核状态更新失败:', error);
+        const errorMessage = error?.message || '未知错误';
+        ElMessage.error('审核状态更新失败: ' + errorMessage);
+    }
 }
 
 // 处理搜索
@@ -133,6 +159,19 @@ const filteredBreachList = computed(() => {
     });
 });
 
+// 删除违约信息的函数
+async function deleteBreach(id) {
+    try {
+        await artDelService(id);
+        ElMessage.success('删除成功');
+        // 重新获取违约信息列表
+        await fetchBreachList();
+    } catch (error) {
+        console.error('删除失败:', error);
+        const errorMessage = error?.message || '未知错误';
+        ElMessage.error('删除失败: ' + errorMessage);
+    }
+}
 </script>
 
 <style lang="scss" scoped>
