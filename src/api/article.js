@@ -48,11 +48,14 @@ export const artGetReviewDetailService = (id) =>
     params: { id }
   })
 
-//3.4更新违约认定审核
-export const artEditReviewService = (id, data) =>
-  request.put('/reviews', data, {
-    params: { id }
-  })
+// 3.4 更新违约认定审核
+export const artEditReviewService = (id, data) => {
+  if (!id) {
+    throw new Error('ID is required for updating a review');
+  }
+  return request.put(`/reviews/${id}`, data);
+};
+
 //3.5删除违约认定审核
 export const artDelReviewService = (id) => request.delete('/reviews' + id)
 
