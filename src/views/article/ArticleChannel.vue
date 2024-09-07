@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { ElMessage, ElMessageBox, ElDialog, ElButton } from 'element-plus'
-import { artGetReasonService, artCreateBreachService } from '@/api/article.js'
+import { artGetReasonService,artCreateBreachService } from '@/api/article.js'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import { onMounted } from 'vue'
 import { articleStore } from '@/stores'
@@ -21,7 +21,6 @@ const articlestore = articleStore()
 const reasonsList = ref('')
 const customer_name = ref('')
 const remarks = ref('')
-const attachment = ref(null) // 新增附件 ref
 
 const showSidebar = ref(false);
 
@@ -56,23 +55,18 @@ const CommitApplication = async () => {
         // 获取表单数据
         const customerName = customer_name.value;
         const externalRating = document.getElementById('level').value;
-        const selectedReasonId = document.getElementById('reasons').value;
+        const selectedReason = document.getElementById('reasons').value;
         const severity = document.getElementById('severity').value;
         const remarksText = remarks.value;
-        const attachmentFile = attachment.value; // 获取附件
-
-        // 找到对应的原因文本
-        const selectedReason = reasonsList.value.find(reason => reason.ID === parseInt(selectedReasonId, 10));
-        const reasonText = selectedReason ? selectedReason.Reason : '';
 
         // 构建请求数据
         const data = {
             customer_name: customerName,
             external_rating: externalRating, 
-            default_reason: reasonText, // 使用原因文本
+            reason_id: parseInt(selectedReason, 10), // 将字符串转换为整数
             severity: severity, 
             remarks: remarksText,
-            attachments: [attachmentFile], // 包含附件
+            attachments: [], // 待定
         };
 
         // 调用 API 服务
@@ -88,13 +82,14 @@ const CommitApplication = async () => {
         document.getElementById('reasons').value = '';
         document.getElementById('severity').value = '';
         remarks.value = '';
-        attachment.value = null; // 清空附件
     } catch (error) {
         console.error('申请提交失败:', error);
         const errorMessage = error?.message || '未知错误';
         ElMessage.error('提交申请失败: ' + errorMessage);
     }
 };
+
+
 
 const populateReasons = async () => {  
     const selectElement = document.getElementById('reasons');  
@@ -134,11 +129,6 @@ const isSidebarOpen = ref(false);
 const onSuccess = () => {
     // 处理成功回调
 }
-
-// 处理附件上传
-const handleAttachmentChange = (event) => {
-    attachment.value = event.target.files[0];
-};
 </script>
 
 <template>
@@ -173,10 +163,6 @@ const handleAttachmentChange = (event) => {
         </div>
         <div>
             备注信息 <input v-model="remarks" placeholder="请输入备注信息"></input>
-        </div>
-        <div>
-            <label for="attachment">附件:</label>
-            <input type="file" id="attachment" @change="handleAttachmentChange" />
         </div>
         <el-button @click="CommitApplication" type="primary">
             提交申请
