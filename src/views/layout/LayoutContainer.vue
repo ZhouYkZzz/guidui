@@ -80,10 +80,10 @@ const handleCommand = async (key) => {
           <span>违约数据统计</span>
         </el-menu-item>
         <!-- 等下注释 -->
-        <el-menu-item index="/article/rebirthDetail">
+        <!-- <el-menu-item index="/article/rebirthDetail">
           <el-icon><Promotion /></el-icon>
           <span>违约重生审核</span>
-        </el-menu-item>
+        </el-menu-item> -->
         <!--  -->
       </el-menu>
     </el-aside>
