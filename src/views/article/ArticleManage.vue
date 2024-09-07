@@ -1,171 +1,89 @@
 <script setup>
-import { ref } from 'vue'
-import { Delete, Edit } from '@element-plus/icons-vue'
-//import ChannelSelect from './components/ChannelSelect.vue'
-import ArticleEdit from './components/ArticleEdit.vue'
-//import { artGetListService, artDelService } from '@/api/article.js'
-import { formatTime } from '@/utils/format.js'
+import { ref, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
-import { articleStore } from '@/stores'
-const articleList = ref([]) // 文章列表
+import { artGetResultService } from '@/api/article' // 获取违约信息查询 API
+
+const customerList = ref([]) // 违约客户列表
 const total = ref(0) // 总条数
-const loading = ref(false) // loading状态
-const router = useRouter()
-// 定义请求参数对象
+const loading = ref(false) // loading 状态
+const router = useRouter() // 使用 vue-router
+
+// 定义分页参数
 const params = ref({
-  pagenum: 1, // 当前页
-  pagesize: 5, // 当前生效的每页条数
-  cate_id: '',
-  state: ''
+  pagenum: 1, // 当前页码
+  pagesize: 10, // 每页显示的条数
 })
 
-// 基于params参数，获取文章列表
-// const getArticleList = async () => {
-//   loading.value = true
-
-//   //const res = await artGetListService()
-//   articleList.value = res.data.data
-//   total.value = res.data.total
-
-//   loading.value = false
-// }
-// getArticleList()
-
-// 处理分页逻辑
-const onSizeChange = (size) => {
-  // console.log('当前每页条数', size)
-  // 只要是每页条数变化了，那么原本正在访问的当前页意义不大了，数据大概率已经不在原来那一页了
-  // 重新从第一页渲染即可
-  params.value.pagenum = 1
-  params.value.pagesize = size
-  // 基于最新的当前页 和 每页条数，渲染数据
-  getArticleList()
-}
-const onCurrentChange = (page) => {
-  // 更新当前页
-  params.value.pagenum = page
-  // 基于最新的当前页，渲染数据
-  getArticleList()
-}
-
-// 搜索逻辑 => 按照最新的条件，重新检索，从第一页开始展示
-const onSearch = () => {
-  params.value.pagenum = 1 // 重置页面
-  getArticleList()
-}
-
-// 重置逻辑 => 将筛选条件清空，重新检索，从第一页开始展示
-const onReset = () => {
-  params.value.pagenum = 1 // 重置页面
-  params.value.cate_id = ''
-  params.value.state = ''
-  getArticleList()
-}
-
-const articleEditRef = ref()
-// 添加逻辑
-//const onAddArticle = () => {
-//  articleEditRef.value.open({})
-//}
-// 编辑逻辑
-const articlestore = articleStore()
-const onEditArticle = (row) => {
-  articlestore.setarticle({
-    id: row.id,
-    title: row.title,
-    content: row.content,
-    createdTime: row.createdTime
-  })
-  router.push({ name: 'edit' })
-}
-// 删除逻辑
-const onDeleteArticle = async (row) => {
-  // 提示用户是否要删除
-  await ElMessageBox.confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  })
-  await artDelService(row.id)
-  ElMessage.success('删除成功')
-  // 重新渲染列表
-  getArticleList()
-}
-
-// 添加或者编辑 成功的回调
-const onSuccess = (type) => {
-  if (type === 'add') {
-    // 如果是添加，最好渲染最后一页
-    const lastPage = Math.ceil((total.value + 1) / params.value.pagesize)
-    // 更新成最大页码数，再渲染
-    params.value.pagenum = lastPage
+// 获取违约信息查询列表的函数
+const getCustomerList = async () => {
+  loading.value = true
+  try {
+    const res = await artGetResultService() // API 请求获取数据
+    console.log("res",res.data.data)
+    if (res.data.status === 0) {
+      customerList.value = res.data.data // 假设返回的数据结构为数组
+      // console.log("asdf",customerList.value)
+      total.value = res.data.length
+    } else {
+      throw new Error('数据格式不正确')
+    }
+  } catch (error) {
+    ElMessage.error('获取违约信息查询列表失败')
+  } finally {
+    loading.value = false
   }
+}
 
-  getArticleList()
+onMounted(() => {
+  getCustomerList()
+})
+
+// 分页处理
+const onSizeChange = (size) => {
+  params.value.pagesize = size
+  getCustomerList()
+}
+
+const onCurrentChange = (page) => {
+  params.value.pagenum = page
+  getCustomerList()
+}
+
+// 跳转到违约重生详情页面
+const goToRebirthDetail = (row) => {
+  console.log("asdfasdfads",row.application_id)
+  console.log(row.customer_name)
+
+  router.push({ name: 'rebirthDetail', params: { id: row.application_id, customer_name: row.customer_name } })
 }
 </script>
 
 <template>
-  <page-container title="文章管理">
-    <template #extra>
-      <!--<el-button type="primary" @click="onAddArticle">生成文案</el-button>-->
-    </template>
-
+  <page-container title="违约信息查询列表">
     <!-- 表单区域 -->
     <el-form inline>
       <el-form-item>
-        <el-input></el-input>
+        <el-input placeholder="输入客户名称搜索"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button @click="onSearch" type="primary">搜索</el-button>
-        <el-button @click="onReset">重置</el-button>
+        <el-button @click="getCustomerList" type="primary">搜索</el-button>
+        <el-button @click="getCustomerList">重置</el-button>
       </el-form-item>
     </el-form>
 
     <!-- 表格区域 -->
-    <el-table :data="articleList" v-loading="loading">
-      <el-table-column label="违约客户" prop="pub_date">
+    <el-table :data="customerList" v-loading="loading">
+      <el-table-column label="违约客户" prop="customer_name" width="150" align="center" />
+      <el-table-column label="审核状态" prop="review_status" width="100" align="center" />
+      <el-table-column label="认定违约原因" prop="default_reason" width="150" align="center" />
+      <el-table-column label="严重程度" prop="severity" width="80" align="center" />
+      <el-table-column label="认定人" prop="reviewer" width="100" align="center" />
+      <el-table-column label="认定审核时间" prop="review_time" width="120" align="center" />
+      <el-table-column label="最新外部等级" prop="external_rating" align="center" />
+      <el-table-column label="操作" width="150" align="center">
         <template #default="{ row }">
-          {{ formatTime(row.createdTime) }}
-        </template>
-      </el-table-column>
-      <el-table-column label="审核状态" prop="pub_date">
-        <template #default="{ row }">
-          {{ formatTime(row.createdTime) }}
-        </template>
-      </el-table-column>
-      <el-table-column label="违约原因" prop="pub_date">
-        <template #default="{ row }">
-          {{ formatTime(row.createdTime) }}
-        </template>
-      </el-table-column>
-      <el-table-column label="严重程度" prop="pub_date">
-        <template #default="{ row }">
-          {{ formatTime(row.createdTime) }}
-        </template>
-      </el-table-column>
-      <el-table-column label="认定人" prop="pub_date">
-        <template #default="{ row }">
-          {{ formatTime(row.createdTime) }}
-        </template>
-      </el-table-column>
-      <!-- 利用作用域插槽 row 可以获取当前行的数据 => v-for 遍历 item -->
-      <el-table-column label="操作">
-        <template #default="{ row }">
-          <el-button
-            circle
-            plain
-            type="primary"
-            :icon="Edit"
-            @click="onEditArticle(row)"
-          ></el-button>
-          <el-button
-            circle
-            plain
-            type="danger"
-            :icon="Delete"
-            @click="onDeleteArticle(row)"
-          ></el-button>
+          <el-button type="primary" @click="goToRebirthDetail(row)">查看详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -174,18 +92,23 @@ const onSuccess = (type) => {
     <el-pagination
       v-model:current-page="params.pagenum"
       v-model:page-size="params.pagesize"
-      :page-sizes="[2, 3, 5, 10]"
+      :page-sizes="[5, 10, 20]"
       :background="true"
-      layout="jumper, total, sizes, prev, pager, next"
+      layout="total, sizes, prev, pager, next, jumper"
       :total="total"
       @size-change="onSizeChange"
       @current-change="onCurrentChange"
       style="margin-top: 20px; justify-content: flex-end"
     />
-
-    <!-- 添加编辑的抽屉 -->
-    <article-edit ref="articleEditRef" @success="onSuccess"></article-edit>
   </page-container>
 </template>
 
-<style lang="scss" scoped></style>
+<style scoped>
+.page-container {
+  padding: 20px;
+}
+
+.el-form-item {
+  margin-bottom: 15px;
+}
+</style>

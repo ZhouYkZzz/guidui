@@ -56,7 +56,7 @@ export const artEditReviewService = (id, data) =>
 //3.5删除违约认定审核
 export const artDelReviewService = (id) => request.delete('/reviews' + id)
 
-//4.1获取违约认定结果列表
+//4.1取所有违约信息查询列表
 export const artGetResultService = () => request.get('/queries')
 
 //4.2获取特定违约认定结果详情
@@ -86,7 +86,8 @@ export const artEditRebirthService = (id, data) =>
 
 //5.5删除违约重生申请
 export const artDelRebirthService = (id) =>
-  request.delete('/rebirth-applications' + id)
+  request.delete(`/rebirth-applications/${id}`)
+
 
 //6.1获取违约重生审核列表
 export const artGetRebirthReviewService = () => request.get('/rebirth-reviews')
@@ -109,7 +110,22 @@ export const artEditRebirthReviewService = (id, data) =>
 
 //6.5删除违约重生审核
 export const artDelRebirthReviewService = (id) =>
-  request.delete('/rebirth-reviews' + id)
+  request.delete(`/rebirth-reviews/${id}`)
+
+
+
+//7.1获取行业违约统计数据
+export const getIndustryBreachStats = (params) =>
+  request.get('/stats/industry/breach', { params })
+
+//7.2获取区域违约统计数据
+export const getRegionBreachStats = (params) =>
+  request.get('/stats/region/breach', { params })
+
+
+
+
+
 
 // 文章1：获取文章列表
 export const artGetListService = () => request.get('/article')

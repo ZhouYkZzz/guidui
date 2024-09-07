@@ -32,6 +32,27 @@ const router = createRouter({
           component: () => import('@/views/article/Edit.vue')
         },
         {
+          path: '/article/rebirthReview',
+          name: 'rebirthReview',
+          props: true,
+          component: () => import('@/views/article/RebirthReview.vue')
+        },
+        {
+          path: '/article/Statistics',
+          name: 'Statistics',
+          props: true,
+          component: () => import('@/views/article/Statistics.vue')
+        },
+        //等下注释
+        {
+          path: '/article/rebirthDetail',
+          name: 'rebirthDetail',
+          props: true,
+          component: () => import('@/views/article/RebirthDetail.vue')
+        },
+        //
+
+        {
           path: '/user/profile',
           component: () => import('@/views/user/UserProfile.vue')
         },
