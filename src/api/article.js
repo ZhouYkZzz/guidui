@@ -61,56 +61,57 @@ export const artGetResultService = () => request.get('/queries')
 
 //4.2获取特定违约认定结果详情
 export const artGetResultDetailService = (id) =>
-  request.get('/queries', {
-    params: { id }
-  })
+  request.get('/queries/'+id);
 
-//5.1获取违约重生申请列表
-export const artGetRebirthService = () => request.get('/rebirth-applications')
+
+//5.1获取违约重生申请列表`
+export const artGetRebirthService = () => request.get('/rebirth/')
 
 //5.2创建新的违约重生申请
 export const artCreateRebirthService = (data) =>
-  request.post('/rebirth-applications', data)
+  request.post('/rebirth/create', data)
 
-//5.3获取特定违约重生申请详情
-export const artGetRebirthDetailService = (id) =>
-  request.get('/rebirth-applications', {
-    params: { id }
-  })
+// //5.3获取特定违约重生申请详情
+// export const artGetRebirthDetailService = (id) =>
+//   request.get('/rebirth', {
+//     params: { id }
+//   })
 
-//5.4更新违约重生申请
-export const artEditRebirthService = (id, data) =>
-  request.put('/rebirth-applications', data, {
-    params: { id }
-  })
+// //5.4更新违约重生申请
+// export const artEditRebirthService = (id, data) =>
+//   request.put('/rebirth', data, {
+//     params: { id }
+//   })
 
 //5.5删除违约重生申请
 export const artDelRebirthService = (id) =>
-  request.delete(`/rebirth-applications/${id}`)
+  request.delete(`/rebirth/${id}`)
 
 
 //6.1获取违约重生审核列表
-export const artGetRebirthReviewService = () => request.get('/rebirth-reviews')
+export const artGetRebirthReviewService = () => request.get('/rebirth/review')
 
 //6.2创建新的违约重生审核
 export const artCreateRebirthReviewService = (data) =>
-  request.post('/rebirth-reviews', data)
+  request.post('/rebirth', data)
 
-//6.3获取特定违约重生审核详情
-export const artGetRebirthReviewDetailService = (id) =>
-  request.get('/rebirth-reviews', {
-    params: { id }
-  })
+//6.3违约重生
+export const artDeleteRebirthReviewService = (id) =>
+  request.delete('/rebirth/'+id)
 
-//6.4更新违约重生审核
-export const artEditRebirthReviewService = (id, data) =>
-  request.put('/rebirth-reviews', data, {
-    params: { id }
-  })
+// //6.3获取特定违约重生审核详情
+// export const artGetRebirthReviewDetailService = (id) =>
+//   request.get('/rebirth-reviews', {
+//     params: { id }
+//   })
 
-//6.5删除违约重生审核
-export const artDelRebirthReviewService = (id) =>
-  request.delete(`/rebirth-reviews/${id}`)
+// //6.4更新违约重生审核
+// export const artEditRebirthReviewService = (id, data) =>
+//   request.put('/rebirth-reviews', data, {
+//     params: { id }
+//   })
+
+
 
 
 
