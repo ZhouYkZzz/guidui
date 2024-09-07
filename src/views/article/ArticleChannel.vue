@@ -23,7 +23,7 @@ const customer_name = ref('')
 const remarks = ref('')
 const industry = ref('')
 const area = ref('')
-const attachment = ref(null);
+//const attachment = ref(null);
 
 const showSidebar = ref(false);
 
@@ -63,7 +63,7 @@ const CommitApplication = async () => {
         const industryValue = industry.value; // 修正这里
         const areaValue = area.value;
         const remarksText = remarks.value;
-        const attachmentFile = attachment.value; // 获取附件
+        //const attachmentFile = attachment.value; // 获取附件
 
         // 找到对应的原因文本
         const selectedReason = reasonsList.value.find(reason => reason.ID === parseInt(selectedReasonId, 10));
@@ -78,7 +78,7 @@ const CommitApplication = async () => {
             area: areaValue, // 修正这里
             industry: industryValue, // 修正这里
             remarks: remarksText,
-            attachments: [attachmentFile], // 待定
+            //attachments: [attachmentFile], // 待定
         };
 
         // 调用 API 服务
@@ -96,7 +96,7 @@ const CommitApplication = async () => {
         industry.value = '';
         area.value = '';
         remarks.value = '';
-        attachment.value = null; 
+        //attachment.value = null; 
     } catch (error) {
         console.error('申请提交失败:', error);
         const errorMessage = error?.message || '未知错误';
@@ -190,10 +190,10 @@ const handleAttachmentChange = (event) => {
         <div>
             备注信息 <input v-model="remarks" placeholder="请输入备注信息"></input>
         </div>
-        <div>
+        <!-- <div>
             <label for="attachment">附件:</label>
             <input type="file" id="attachment" @change="handleAttachmentChange" />
-        </div>
+        </div> -->
         <el-button @click="CommitApplication" type="primary">
             提交申请
         </el-button>
