@@ -3,7 +3,7 @@ import axios from 'axios'
 //import { useUserStore } from '@/stores'
 import { ElMessage } from 'element-plus'
 import router from '@/router'
-const baseURL = 'https://32f0-39-144-124-97.ngrok-free.app'
+const baseURL = 'https://3c9b-112-10-128-121.ngrok-free.app'
 
 const instance = axios.create({
   // TODO 1. 基础地址，超时时间

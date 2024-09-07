@@ -43,14 +43,12 @@ const router = createRouter({
           props: true,
           component: () => import('@/views/article/Statistics.vue')
         },
-        //等下注释
         {
-          path: '/article/rebirthDetail',
+          path: '/article/rebirthDetail/:id',
           name: 'rebirthDetail',
           props: true,
           component: () => import('@/views/article/RebirthDetail.vue')
         },
-        //
 
         {
           path: '/user/profile',

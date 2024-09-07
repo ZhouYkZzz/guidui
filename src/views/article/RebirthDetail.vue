@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { artGetDetailService, artEditRebirthService } from '@/api/article' // API
+import { artCreateRebirthService, artGetResultDetailService } from '@/api/article' // API
 
 // 路由和表单数据
 const route = useRoute()
@@ -10,6 +10,7 @@ const router = useRouter()
 
 // 表单数据
 const form = ref({
+  application_id: '',
   customer_name: '', // 违约客户
   default_reason: '', // 违约原因
   severity: '', // 严重程度
@@ -26,20 +27,21 @@ const getRebirthDetail = async () => {
     
     console.log("id",id)
 
-    const res = await artGetDetailService(id)
-    const data = res.data
+    const res = await artGetResultDetailService(id)
+    const data = res.data.data
 
     console.log("id2",data)
     form.value = {
+      application_id: data.application_id,
       customer_name: data.customer_name,
       default_reason: data.default_reason,
       severity: data.severity,
-      applicant: data.applicant,
+      reviewer: data.reviewer,
       application_time: data.application_time,
-      external_rating: data.latest_external_rating,
+      external_rating: data.external_rating,
       rebirth_reason: '' // 重生原因需要用户选择
     }
-  } catch (error) {
+  } catch (error) { 
     ElMessage.error('获取违约重生详情失败')
   }
 }
@@ -51,10 +53,10 @@ onMounted(() => {
 // 提交表单
 const submitRebirth = async () => {
   try {
-    const { id } = route.params // 获取当前记录的 id
-    await artEditRebirthService(id, form.value) // 提交表单
+    await artCreateRebirthService(form.value) // 提交表单
     ElMessage.success('违约重生提交成功')
-    router.push({ name: 'rebirthList' }) // 提交成功后返回列表
+    console.log('form',form.value)
+    router.push({ name: 'rebirthReview' }) // 提交成功后返回列表
   } catch (error) {
     ElMessage.error('提交失败，请重试')
   }
@@ -82,7 +84,7 @@ const submitRebirth = async () => {
 
       <!-- 认定人 -->
       <el-form-item label="认定人">
-        <el-input v-model="form.identified_by" disabled></el-input>
+        <el-input v-model="form.reviewer" disabled></el-input>
       </el-form-item>
 
       <!-- 认定申请时间 -->
@@ -92,7 +94,7 @@ const submitRebirth = async () => {
 
       <!-- 最新外部等级 -->
       <el-form-item label="最新外部等级">
-        <el-input v-model="form.latest_external_rating" disabled></el-input>
+        <el-input v-model="form.external_rating" disabled></el-input>
       </el-form-item>
 
       <!-- 选择重生原因 -->
