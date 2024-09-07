@@ -23,7 +23,7 @@ const getCustomerList = async () => {
     console.log("res",res.data.data)
     if (res.data.status === 0) {
       customerList.value = res.data.data // 假设返回的数据结构为数组
-      console.log("asdf",customerList.value)
+      // console.log("asdf",customerList.value)
       total.value = res.data.length
     } else {
       throw new Error('数据格式不正确')
@@ -55,7 +55,7 @@ const goToRebirthDetail = (row) => {
   console.log("asdfasdfads",row.application_id)
   console.log(row.customer_name)
 
-  router.push({ name: 'rebirthDetail', params: { id: row.application_id} })
+  router.push({ name: 'rebirthDetail', params: { id: row.application_id, customer_name: row.customer_name } })
 }
 </script>
 
