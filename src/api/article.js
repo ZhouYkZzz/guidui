@@ -14,6 +14,7 @@ export const artDelChannelService = (id) =>
 //1.1: 获取违约原因
 export const artGetReasonService = () =>   
   request.get('/reasons/default');  
+
 // 2.1：获取违约申请列表
 export const artGetBreachService = () => request.get('/applications')
 
@@ -114,7 +115,7 @@ export const artDeleteRebirthReviewService = (id) =>
 //   })
 
 
-
+export const getOverview = () => request.get('/over')
 
 
 //7.1获取行业违约统计数据

@@ -1,33 +1,42 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import * as echarts from 'echarts'
-import { getIndustryBreachStats, getRegionBreachStats } from '@/api/article'
+import { getOverview, artGetResultService } from '@/api/article'
 
-const currentStatType = ref('industry')
-const industryChart = ref(null)
-const regionChart = ref(null)
+const industryDefaultChart = ref(null)
+const industryRebornChart = ref(null)
+const regionDefaultChart = ref(null)
+const regionRebornChart = ref(null)
 
 const renderChart = async (chartRef, getDataFunc, titleText, seriesType) => {
   try {
     const data = await getDataFunc()
     const chart = echarts.init(chartRef.value)
-
     const option = {
-      title: { text: titleText },
-      tooltip: {},
-      legend: { data: ['违约主体数', '违约重生主体数'] },
-      xAxis: { data: data.categories },
-      yAxis: {},
+      title: { text: titleText, left: 'center' },
+      tooltip: {
+        trigger: 'item',
+        formatter: '{a} <br/>{b}: {c} ({d}%)'
+      },
+      legend: {
+        orient: 'vertical',
+        top: 'center',
+        left: 'right',
+        data: data.categories
+      },
       series: [
         {
-          name: '违约主体数',
+          name: titleText,
           type: seriesType,
-          data: data.breachCount
-        },
-        {
-          name: '违约重生主体数',
-          type: seriesType,
-          data: data.rebirthCount
+          radius: '50%',
+          data: data.seriesData,
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
         }
       ]
     }
@@ -37,33 +46,56 @@ const renderChart = async (chartRef, getDataFunc, titleText, seriesType) => {
   }
 }
 
-const renderIndustryStats = () => renderChart(industryChart, getIndustryBreachStats, '行业违约统计', 'bar')
-const renderRegionStats = () => renderChart(regionChart, getRegionBreachStats, '区域违约统计', 'line')
-
-onMounted(() => {
-  renderIndustryStats()
-})
-
-const switchStatType = (type) => {
-  currentStatType.value = type
-  if (type === 'industry') {
-    renderIndustryStats()
-  } else if (type === 'region') {
-    renderRegionStats()
+const processData = (data, key) => {
+  const result = {}
+  data.forEach(item => {
+    const value = item[key]
+    if (value) {
+      if (!result[value]) {
+        result[value] = 0
+      }
+      result[value]++
+    }
+  })
+  return {
+    categories: Object.keys(result),
+    seriesData: Object.keys(result).map(category => ({
+      name: category,
+      value: result[category]
+    }))
   }
 }
+
+onMounted(async () => {
+  const defaultData = await artGetResultService()
+  const rebornData = await getOverview()
+  console.log('defaultData', defaultData)
+  console.log('rebornData', rebornData)
+
+
+  const defaultIndustryData = processData(defaultData.data.data, 'industry')
+  const rebornIndustryData = processData(rebornData.data.data, 'Industry')
+  const defaultRegionData = processData(defaultData.data.data, 'area')
+  const rebornRegionData = processData(rebornData.data.data, 'Area')
+
+  renderChart(industryDefaultChart, () => defaultIndustryData, '行业违约统计', 'pie')
+  renderChart(industryRebornChart, () => rebornIndustryData, '行业重生统计', 'pie')
+  renderChart(regionDefaultChart, () => defaultRegionData, '区域违约统计', 'pie')
+  renderChart(regionRebornChart, () => rebornRegionData, '区域重生统计', 'pie')
+})
 </script>
 
 <template>
-  <page-container title="违约统计">
-    <div style="margin-bottom: 20px;">
-      <el-button :type="currentStatType === 'industry' ? 'primary' : 'default'" @click="switchStatType('industry')">按行业统计</el-button>
-      <el-button :type="currentStatType === 'region' ? 'primary' : 'default'" @click="switchStatType('region')">按区域统计</el-button>
+  <div style="display: flex; flex-wrap: wrap;">
+    <div style="display: flex; width: 100%;">
+      <div ref="industryDefaultChart" style="width: 50%; height: 300px;"></div>
+      <div ref="industryRebornChart" style="width: 50%; height: 300px;"></div>
     </div>
-
-    <div v-show="currentStatType === 'industry'" ref="industryChart" style="width: 100%; height: 400px;"></div>
-    <div v-show="currentStatType === 'region'" ref="regionChart" style="width: 100%; height: 400px;"></div>
-  </page-container>
+    <div style="display: flex; width: 100%;">
+      <div ref="regionDefaultChart" style="width: 50%; height: 300px;"></div>
+      <div ref="regionRebornChart" style="width: 50%; height: 300px;"></div>
+    </div>
+  </div>
 </template>
 
 <style scoped>

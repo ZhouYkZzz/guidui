@@ -161,9 +161,9 @@ const handleAttachmentChange = (event) => {
             <label for="level">最新外部等级:</label>  
             <select id="level" onchange="">  
                 <option value="">请选择</option>  
-                <option value="1">A</option>  
-                <option value="2">B</option>  
-                <option value="3">C</option>  
+                <option value="A">A</option>  
+                <option value="B">B</option>  
+                <option value="C">C</option>  
             </select>  
         </div>
         <div>
@@ -175,10 +175,10 @@ const handleAttachmentChange = (event) => {
         <div>
             <label for="severity">违约严重性:</label>  
             <select id="severity" onchange="">  
-                <option value="0">请选择</option>  
-                <option value="1">高</option>  
-                <option value="2">中</option>  
-                <option value="3">低</option>  
+                <option value="">请选择</option>  
+                <option value="高">高</option>  
+                <option value="中">中</option>  
+                <option value="低">低</option>  
             </select>  
         </div>
         <div>

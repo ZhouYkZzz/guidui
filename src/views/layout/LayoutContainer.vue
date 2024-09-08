@@ -3,11 +3,16 @@ import {
   Management,
   Promotion,
   UserFilled,
+  Search,
+  Check,
+  Histogram,
+  View,
   User,
   Crop,
   EditPen,
   SwitchButton,
-  CaretBottom
+  CaretBottom,
+  Select
 } from '@element-plus/icons-vue'
 import avatar from '@/assets/default.png'
 import { useUserStore } from '@/stores'
@@ -64,19 +69,19 @@ const handleCommand = async (key) => {
           <span>违约认定申请</span>
         </el-menu-item>
         <el-menu-item index="/article/edit">
-          <el-icon><Management /></el-icon>
+          <el-icon><View /></el-icon>
           <span>违约认定审核</span>
         </el-menu-item>
         <el-menu-item index="/article/manage">
-          <el-icon><Promotion /></el-icon>
+          <el-icon><Search /></el-icon>
           <span>违约信息查询</span>
         </el-menu-item>
         <el-menu-item index="/article/rebirthReview">
-          <el-icon><Promotion /></el-icon>
+          <el-icon><Check /></el-icon>
           <span>违约重生审核</span>
         </el-menu-item>
         <el-menu-item index="/article/Statistics">
-          <el-icon><Promotion /></el-icon>
+          <el-icon><Histogram /></el-icon>
           <span>违约数据统计</span>
         </el-menu-item>
         <!-- 等下注释 -->
@@ -90,9 +95,7 @@ const handleCommand = async (key) => {
     <el-container>
       <el-header>
         <div>
-          <strong>{{
-            userStore.user.nickname || userStore.user.username
-          }}</strong>
+          <strong>违约管理系统</strong>
         </div>
         <el-dropdown placement="bottom-end" @command="handleCommand">
           <!-- 展示给用户，默认看到的 -->

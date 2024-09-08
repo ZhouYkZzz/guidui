@@ -60,7 +60,7 @@ const handleRebirth = (row) => {
   ).then(async () => {
     try {
       // 调用删除 API，假设使用 row.id 作为删除记录的标识
-      await artDeleteRebirthReviewService(row.id)
+      await artDeleteRebirthReviewService(row.application_id)
       ElMessage.success('重生成功')
       // 删除成功后，重新获取审核列表
       getReviewList()
@@ -76,15 +76,7 @@ const handleRebirth = (row) => {
 <template>
   <page-container title="违约重生审核列表">
     <!-- 表单区域 -->
-    <el-form inline>
-      <el-form-item>
-        <el-input placeholder="输入客户名称搜索"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button @click="getReviewList" type="primary">搜索</el-button>
-        <el-button @click="getReviewList">重置</el-button>
-      </el-form-item>
-    </el-form>
+
 
     <!-- 表格区域 -->
     <el-table :data="reviewList" v-loading="loading">
@@ -92,7 +84,7 @@ const handleRebirth = (row) => {
       <el-table-column label="认定违约原因" prop="default_reason" width="150" align="center" />
       <el-table-column label="严重程度" prop="severity" width="80" align="center" />
       <el-table-column label="认定人" prop="reviewer" width="100" align="center" />
-      <el-table-column label="认定申请时间" prop="application_time" width="120" align="center" />
+      <el-table-column label="认定申请时间" prop="application_time" width="150" align="center" />
       <el-table-column label="最新外部等级" prop="external_rating" align="center" />
       <el-table-column label="重生原因" prop="rebirth_reason" align="center" />
       <el-table-column label="操作" width="150" align="center">
@@ -108,7 +100,7 @@ const handleRebirth = (row) => {
       </el-table-column>
     </el-table>
 
-    <!-- 分页区域 -->
+    <!-- 分页区域
     <el-pagination
       v-model:current-page="params.pagenum"
       v-model:page-size="params.pagesize"
@@ -119,7 +111,7 @@ const handleRebirth = (row) => {
       @size-change="onSizeChange"
       @current-change="onCurrentChange"
       style="margin-top: 20px; justify-content: flex-end"
-    />
+    /> -->
   </page-container>
 </template>
 
